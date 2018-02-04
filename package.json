@@ -1,0 +1,14 @@
+{
+  "name": "rsg-chess-desktop",
+  "version": "1.0.0",
+  "description": "Desktop version of RSG Chess for offline use",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron-prebuilt": "^1.4.13"
+  }
+}

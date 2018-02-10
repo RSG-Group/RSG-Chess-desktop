@@ -308,11 +308,8 @@ class MainComponent extends React.Component {
     const { checkmate } = this.state;
 
     return (
-      <Modal
-        show={!!checkmate}
-        onHide={() => { this.setState({ checkmate: false }) }}
-      >
-        <Modal.Header closeButton>
+      <Modal show={!!checkmate}>
+        <Modal.Header>
           <Modal.Title>{ checkmate === 'D' ? 'Stalemate!' : 'Checkmate!' }</Modal.Title>
         </Modal.Header>
         <Modal.Body>

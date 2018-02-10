@@ -1,11 +1,10 @@
-import { Piece } from './pieces.js';
-import * as _ from 'lodash';
+import { Piece }    from './pieces.js';
 import Chess_AI from './AI.js';
 
 function Game(promoCallback) {
+  // the game board
   this.board = [];
-  this.threefold = [];
-  this.turn = [];
+  // fill the board
   for (var i = 0; i < 8; i++) {
     var arrayIn = [];
     for (var j = 0; j < 8; j++) {
@@ -13,6 +12,13 @@ function Game(promoCallback) {
     }
     this.board.push(arrayIn);
   }
+
+  // the history of all turns
+  this.turn = [];
+  // the current game configuration as FEN
+  this.FENboard = this.boardToFEN();
+  // the history of all game configurations displayed using FEN
+  this.threefold = [];
 }
 
 Game.prototype.piece = function (type, x, y, color) {
@@ -41,7 +47,7 @@ Game.prototype.moveSelected = function (
       }
 
       if (!validMove) return false;
-
+      
       var movePiece = validMove.movePiece;
       var take, paste, rook;
       if (movePiece) {
@@ -70,9 +76,17 @@ Game.prototype.moveSelected = function (
       this.board[selected.y][selected.x] = null;
       this.board[y][x].x = x;
       this.board[y][x].y = y;
-      this.threefold.push(_.cloneDeep(game.board));
-      if (selected.type === 'pawn' || piece) this.threefold = [];
 
+      // check for threefold repetition
+      this.FENboard = this.boardToFEN();
+      this.threefold.push(this.FENboard);
+      if (selected.type === 'pawn' || piece) this.threefold = [];
+      if(this.threefoldCheck()) checkmateCallback('D');
+
+      // check for the fifty-move rule
+      if (this.halfmoveClock() >= 50) checkmateCallback('D');
+
+      // check for pawn promotion
       if (selected.type === "pawn") {
         if ((selected.color === "W" && y === 0) || (selected.color === "B" && y === 7)) {
           if(promotionCallback) {
@@ -86,7 +100,7 @@ Game.prototype.moveSelected = function (
       var checkmateColor = selected.color === 'W' ? 'B' : 'W';
       var checkmateValue = this.checkmate(checkmateColor);
       if(checkmateValue) checkmateCallback(checkmateValue);
-      
+
       // Play AI
       if (playAgainstAI) {
         var bestMove = Chess_AI(this);
@@ -141,12 +155,13 @@ Game.prototype.simulateAndFilter = function (moves, piece) {
 }
 
 Game.prototype.checkmate = function(color){
+  // using let will allow us to make the code a bit simpler
   for(let i = 0; i < 8; i++){
 		for(let j = 0; j < 8; j++){
 			if (
-        game.board[i][j] &&
-        game.board[i][j].color === color &&
-        game.board[i][j].getValidMoves(true).length
+        this.board[i][j] &&
+        this.board[i][j].color === color &&
+        this.board[i][j].getValidMoves(true).length
       ) return false;
 		}
   }
@@ -154,22 +169,6 @@ Game.prototype.checkmate = function(color){
   if (this.warning(color)) return color;
 	return 'D';
 }
-
-// Game.prototype.findThreefold = function(c1, c2){
-  
-// }
-
-// Game.prototype.compareConfiguration = function (conf1, conf2){
-//   if(!conf1 || !conf2) return false;
-
-//   for (var i = 0; i < 8; i++){
-//     for (var j = 0; j < 8; j++){
-//       if ((conf1[i][j] && !conf2[i][j]) || (!conf1[i][j] && conf2[i][j])) return false;
-//     }
-//   }
-
-//   return true;
-// }
 
 Game.prototype.simpleMovePiece = function(piece, from, to){
   var board = this.board;
@@ -204,5 +203,66 @@ Game.prototype.warning = function (color) {
   })
   return result;
 };
+
+Game.prototype.threefoldCheck = function () {
+  var threefold = this.threefold;
+  var length = threefold.length;
+
+  for(var i = 0; i < length; i++){
+    // using let will allow us to make the code simpler
+    let count = 0;
+    for (var j = i + 1; j < length; j++) {
+      if(threefold[i] === threefold[j]) count += 1;
+    }
+    if(count >= 2) return true;
+  }
+  
+  return false;
+}
+
+Game.prototype.boardToFEN = function () {
+  var board = this.board;
+ 
+  // Convert the board configuration into FEN
+  var FENboard = '';
+  var missingPieces = 0;
+  for (var i = 0; i < 8; i++) {
+    for (var j = 0; j < 8; j++) {
+      if(board[i][j]) {
+        if (missingPieces) FENboard += missingPieces;
+        missingPieces = 0;
+        FENboard += board[i][j].FENname;
+      } else {
+        missingPieces++;
+      }
+    }
+    if (missingPieces) FENboard += missingPieces;
+    missingPieces = 0;    
+    FENboard += i < 7 ? '/' : '';
+  }
+ 
+  /*
+    More information about the FEN notation:
+    https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+    https://chessprogramming.wikispaces.com/Forsyth-Edwards+Notation
+  */
+ 
+  return FENboard;
+};
+
+Game.prototype.halfmoveClock = function () {
+  var turn = this.turn;
+  var length = turn.length;
+  var count = 0;
+  if (turn.length === 0) return count;
+
+  var ev = turn[(length - 1) - count];
+  while(count <= length - 1 && ev.type !== 'pawn' && !ev.piece){
+    count++;
+    ev = turn[(length - 1) - count]; 
+  }
+
+  return count;
+}
 
 export default Game;

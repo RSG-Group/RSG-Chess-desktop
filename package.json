@@ -1,6 +1,6 @@
 {
   "name": "rsg-chess-desktop",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Desktop version of RSG Chess for offline use",
   "main": "index.js",
   "scripts": {

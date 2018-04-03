@@ -10,5 +10,9 @@
   "license": "ISC",
   "devDependencies": {
     "electron": "^1.7.12"
+  },
+  "dependencies": {
+    "rsg-chess": "^1.0.0",
+    "rsg-chess-graphics": "^1.0.1"
   }
 }

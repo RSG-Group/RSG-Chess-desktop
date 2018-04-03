@@ -1,15 +1,19 @@
 {
-  "name": "rsg-chess-desktop",
+  "name": "rsg_chess_desktop",
   "version": "0.0.1",
   "description": "Desktop version of RSG Chess for offline use",
   "main": "index.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "win-build": "electron-packager . --platform=win32 --arch=x64 --out=dist RSGChess",
+    "make-exe": "yarn run win-build && node ./build/winBuild.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^1.7.12"
+    "electron": "^1.7.12",
+    "electron-winstaller": "^2.6.4",
+    "electron-packager": "^11.2.0"
   },
   "dependencies": {
     "rsg-chess": "^1.0.0",

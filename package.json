@@ -6,16 +6,21 @@
   "scripts": {
     "start": "electron .",
     "win-build": "electron-packager . --platform=win32 --arch=x64 --out=dist RSGChess",
-    "make-exe": "yarn run win-build && node ./build/winBuild.js"
+    "linux-build": "electron-packager . RSGChess --out=dist --overwrite",
+    "make-exe": "npm run win-build && node ./build/winBuild.js",
+    "make-linux-installer": "npm run linux-build && node build/linuxBuild.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "electron": "^1.7.12",
+    "electron-packager": "^11.2.0",
     "electron-winstaller": "^2.6.4",
-    "electron-packager": "^11.2.0"
+    "electron-installer-linux": "^1.1.1",
+    "electron-installer-snap": "^2.0.1"
   },
   "dependencies": {
+    "electron-installer-snap": "^2.0.1",
     "rsg-chess": "^1.0.0",
     "rsg-chess-graphics": "^1.0.1"
   }

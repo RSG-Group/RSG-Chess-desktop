@@ -15,8 +15,8 @@ if (process.arch === 'x86') arch = 'i386'
 if (process.arch === 'ia32') arch = 'i386'
 
 const options = {
-  src: `dist/RSG-Chess-desktop-linux-${process.arch}`,
-  dest: 'dist/installers',
+  src: `./dist/RSGChess-linux-${process.arch}`,
+  dest: './dist/installers',
   arch,
   categories: ['Utility'],
   icon: {

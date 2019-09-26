@@ -1,26 +1,28 @@
 {
-  "name": "rsg_chess_desktop",
+  "name": "rsg-chess-desktop",
   "version": "1.0.0-alpha.1",
   "description": "Cool desktop chess game... for everyone!",
   "main": "index.js",
   "scripts": {
     "start": "electron .",
-    "win-build": "electron-packager . --platform=win32 --arch=x64 --out=dist RSGChess",
-    "linux-build": "electron-packager . RSGChess --out=dist --overwrite",
+    "win-build": "electron-packager . --platform=win32 --asar --arch=x64 --out=dist RSGChess --overwrite",
+    "linux-build": "electron-packager . RSGChess --asar --out=dist --overwrite",
+    "mac-build": "npm run linux-build --- --icon build/icon.icns",
     "make-exe": "npm run win-build && node ./build/winBuild.js",
+    "make-dmg": "npm run mac-build && node build/macBuild.js",
     "make-linux-installer": "npm run linux-build && node build/linuxBuild.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^2.0.1",
+    "electron": "^3.0.7",
     "electron-installer-linux": "^2.0.0",
-    "electron-installer-snap": "^2.0.1",
-    "electron-packager": "^12.1.0",
-    "electron-winstaller": "^2.6.4"
+    "electron-installer-snap": "^3.0.0",
+    "electron-packager": "^12.2.0",
+    "electron-winstaller": "^2.7.0"
   },
   "dependencies": {
-    "rsg-chess": "^1.0.0",
-    "rsg-chess-graphics": "^1.0.1"
+    "rsg-chess": "^1.1.0-alpha.2",
+    "rsg-chess-graphics": "^1.1.0-alpha.1"
   }
 }

@@ -39,16 +39,16 @@ if (args.includes('--build') && (
   args.includes('redhat') || args.includes('debian') ||
   args.includes('snap') || args.includes('flatpak')
 )) {
-  process.argv.map((arg) => {
+  process.argv.forEach((arg) => {
     if (arg === 'debian') debian(options).then(callback).catch(errCallback)
-    if (arg === 'redhat') redhat(options).then(callback).catch(errCallback)
-    if (arg === 'flatpak') flatpak(flatpakOptions).then(callback).catch(errCallback)
-    if (arg === 'snap') snap(snapOptions).then(callback).catch(errCallback)
-    return true
+    else if (arg === 'redhat') redhat(options).then(callback).catch(errCallback)
+    else if (arg === 'flatpak') flatpak(flatpakOptions).then(callback).catch(errCallback)
+    else if (arg === 'snap') snap(snapOptions).then(callback).catch(errCallback)
   })
 } else {
   console.log('No arguments given, generating .deb, .rpm, snap and .flatpak.')
-  debian(options, callback)
-  redhat(options, callback)
-  flatpak(flatpakOptions, callback)
+  debian(options).then(callback).catch(errCallback)
+  redhat(options).then(callback).catch(errCallback)
+  snap(snapOptions).then(callback).catch(errCallback)
+  flatpak(flatpakOptions).then(callback).catch(errCallback)
 }
